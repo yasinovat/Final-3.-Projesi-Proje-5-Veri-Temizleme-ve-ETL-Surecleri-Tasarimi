@@ -36,3 +36,42 @@ E-posta adreslerinin '@' ve '.' içerip içermediği kontrol edilir. Geçersiz f
 ### 1.10 Standart Dönüştürme Kurallarının Uygulanması ve Veri Entegrasyonu
 ETL_TransformationRules tablosuna 5 temel kural tanımlanır: FirstName/LastName için TRIM/UPPER, EmailAddress için LOWER/TRIM, BusinessEntityID referansı ve ModifiedDate güncellemesi. Adres ve telefon verilerinin de benzer kuralları tanımlanıp tüm staging verisi için eksik veri analizi yapılır.
 
+---
+
+##  2. HAFTA - ETL UYGULAMASI VE VERİ DÖNÜŞTÜRME
+
+Bu haftada staging tablolarındaki veriler temizlenerek ana tablolara yüklenir ve kapsamlı raporlar hazırlanır.
+
+### 2.1 Temizlenmiş Tablolar Oluşturma
+Cleaned_Person, Cleaned_EmailAddress, Cleaned_Address ve Cleaned_PersonPhone tabloları oluşturulur. Her tablo NOT NULL kısıtları, doğrulama skorları ve IsVerified alanları içerir.
+
+### 2.2 Müşteri Verilerini Temizleyerek Yükleme
+stg_Person'dan FirstName ve LastName NULL olmayan kayıtlar alınır. LTRIM, RTRIM, UPPER ile standartlaştırılıp Cleaned_Person'a yüklenir. ETL_ProcessLog'a başarı durumu kaydedilir.
+
+### 2.3 Adres Verilerini Temizleyerek Yükleme
+stg_Address'den AddressLine1, City ve PostalCode'ları geçerli olan kayıtlar Cleaned_Address'e yüklenir. Posta kodu 4-10 karakter kontrolü yapılır ve AddressValidationScore hesaplanır.
+
+### 2.4 E-posta ve Telefon Verilerini Temizleyerek Yükleme
+stg_EmailAddress ve stg_PersonPhone tablolarından geçerli veriler seçilir. E-postalar LOWER/TRIM ile, telefonlar tire ve parantez kaldırılarak temizlenir. Cleaned_EmailAddress ve Cleaned_PersonPhone'a yüklenir.
+
+### 2.5 Yinelenen Kayıtları Tespit ve Veri Kalitesi Raporu
+GROUP BY BusinessEntityID ile aynı müşteri için birden fazla kayıt olup olmadığı kontrol edilir. Yinelenen kayıtlar DataQuality_Inconsistency'e DUPLICATE olarak işaretlenir.
+
+### 2.6 ETL Performans ve İşlem Günlüğü
+ETL_ProcessLog tablosuna her temizleme adımının başlangıç/bitiş saati, işlenen kayıt sayıları ve hata durumu kaydedilir. vw_ETL_Performance view'i ile her adımın süresi ve başarı oranı görülür.
+
+### 2.7 Bütünleşik Müşteri Profilleri View'leri
+vw_Cleaned_Customer_Data ve vw_Cleaned_Customer_Complete_Profile view'leri oluşturulur. Müşteri bilgileri e-posta, adres ve telefon verileriyle LEFT JOIN ile birleştirilir.
+
+### 2.8 Veri Kalitesi Karşılaştırma ve Metrikleri
+vw_Data_Quality_Comparison view'i Staging ve Cleaned tablolar arasındaki farkları gösterir. Genel veri kalitesi yüzdesi, eksik veri raporları ve risk seviyeleri hesaplanır.
+
+### 2.9 Kapsamlı Raporlar - Hata, Eksik Veri ve Performans
+DataQuality_Inconsistency, DataQuality_MissingData ve ETL_ProcessLog tabloları detaylı şekilde sorgulanır. Hata tipleri, eksik veri yüzdeleri ve işlem performansları raporlanır.
+
+### 2.10 Proje Tamamlama Raporu ve Son İstatistikler
+ETL İşlemi Özet Raporu sunulur. Toplam işlenen, temizlenen, doğrulanan kayıt sayıları, genel veri kalitesi yüzdesi ve proje tamamlanma tarihi belirtilir.
+
+Gerekli Video Linklerim:
+[Final 3. ProjeV1:(Proje 5: Veri Temizleme ve ETL Süreçleri Tasarımı)](https://drive.google.com/file/d/1e6bvomdhwSxS_xMZ4ox9Hl23wolZwxY7/view?usp=drive_link)
+[Final 3. ProjeV2:(Proje 5: Veri Temizleme ve ETL Süreçleri Tasarımı)](https://drive.google.com/file/d/1h6YWU3Z1aYzAaB0UO3U6PIA--2XD9Aoz/view?usp=drive_link)
